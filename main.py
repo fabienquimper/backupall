@@ -15,10 +15,9 @@ from osc_communication import OscDispatcher, OscCommunication
 import webserver
 import player
 import dataobj
+from datajson import AllData
 
-# All data
-lastJsonData = ''
-lastJsonDataTimestamp = ''
+allData = AllData()
 
 # OSC module
 oscDispatcher = OscDispatcher()
@@ -32,7 +31,6 @@ def waitForever():
     print("End")
 
 if __name__ == "__main__":
-
     parser = argparse.ArgumentParser(description="Run a simple HTTP server")
     parser.add_argument(
         "-l",
@@ -52,13 +50,13 @@ if __name__ == "__main__":
     print("Before run")
 
     # Run the webserver
-    webserver.run(addr=args.listen, port=args.port)
+    webserver.run(addr=args.listen, port=args.port, allData=allData)
 
     # Run master
     #global oscBuilder
     #global lastJsonData
     #global lastJsonDataTimestamp
-    player = player.PlayerMaster(oscBuilder, lastJsonData, lastJsonDataTimestamp)
+    player = player.PlayerMaster(oscBuilder, allData)
     player.start()
 
     # Start forever loops

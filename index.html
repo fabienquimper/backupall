@@ -27,8 +27,8 @@
         <div class="col">200ms</div>
         <div class="col"><div id="target6"></div></div>
         <div class="col">20s</div>
-        <div class="col"><h3>On/Off</h3></div>
-        <div class="col"><div id="target7"></div></div>
+        <div class="col"><div id="cadenceProx"></div></div>
+        <div class="col"><div class="d-inline-block">On/Off</div><div id="target7"></div></div>
       </div>
       <div class="row">
         <div class="col"><h3>Id</h3></div>
@@ -36,6 +36,7 @@
         <div class="col"><h3>Attack</h3></div>
         <div class="col"><h3>Hold</h3></div>
         <div class="col"><h3>Release</h3></div>
+        <div class="col"></div>
       </div>
       <div class="row">
   <!--      <div class="col"><div id="target1"></div></div> -->
@@ -44,6 +45,7 @@
         <div class="col"><div id="target3"></div></div>
         <div class="col"><div id="target4"></div></div>
         <div class="col"><div id="target5"></div></div>
+        <div class="col"></div>
       </div>
     </div>
 
@@ -61,6 +63,9 @@
           // 3) Send JSON without controler to the server
           let jsonStringify = getAllValuesWithoutController();
           window.sendAllDataToServer(jsonStringify);
+
+          // Update some UI field
+          window.document.getElementById('cadenceProx').innerHTML = Math.round(window.allData.global.cadence.value * 200)*100 + ' ms';
       };
 
       // ###################################################
@@ -154,8 +159,8 @@
               'value': -1,
               'controller': window.createSlider("target6"),
             },
-            'onoff': {
-              'value': false,
+            'is_on': {
+              'value': 0,
               'controller': window.createOnOff("target7"),
             }
           },
