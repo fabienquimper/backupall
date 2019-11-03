@@ -5,28 +5,6 @@ import argparse
 from http.server import HTTPServer, BaseHTTPRequestHandler, CGIHTTPRequestHandler
 import json
 import datetime
-from pythonosc import dispatcher
-from pythonosc import osc_server
-from pythonosc import udp_client
-from pythonosc import osc_message_builder
-
-lastJsonData = ''
-lastJsonDataTimestamp = ''
-
-def rien():
-    print("Rien")
-
-def print_objects(unused_addr, args):
-    print("Data: " + args)
-    #print("Mode received: [{0}]".format(args[0]))
-
-client = udp_client.SimpleUDPClient("127.0.0.1", 8001)
-
-dispatcher = dispatcher.Dispatcher()
-dispatcher.map("/control/controler/sequence", print_objects)#filter_min_max  rien
-serverOsc = osc_server.ThreadingOSCUDPServer(("127.0.0.1", 8001), dispatcher)
-thread2 = threading.Thread(target = serverOsc.serve_forever)
-thread2.start()
 
 def getDateTimestamp():
     return datetime.datetime.fromtimestamp(time.gmtime()).isoformat()
@@ -70,60 +48,6 @@ class S(CGIHTTPRequestHandler):
         self._set_headers()
         self.wfile.write(self._html("POST!"))
 
-StartTime=time.time()
-
-class setInterval :
-    def __init__(self,interval,action) :
-        self.interval=interval
-        self.action=action
-        self.stopEvent=threading.Event()
-        thread=threading.Thread(target=self.__setInterval)
-        thread.start()
-
-    def __setInterval(self) :
-        nextTime=time.time()+self.interval
-        while not self.stopEvent.wait(nextTime-time.time()) :
-            nextTime+=self.interval
-            self.action()
-
-    def cancel(self) :
-        self.stopEvent.set()
-
-class PlayerMaster:
-    id = 0
-
-    def rien(self):
-        print("Rien")
-
-    #def filter_min_max(unused_addr, args):
-    #    print("Filter min-max: col min max:[{0}] ".format(args))
-
-    #def startOscListenner(self):
-        #server.serve_forever()
-
-
-    def sendOsc(self):
-        global lastJsonData
-        global lastJsonDataTimestamp
-        if lastJsonData == '':
-            lastJsonData = 'empty'
-        client.send_message("/control/controler/sequence", "dsffds dsfdsf dsfds dsf")
-        #client.send_message("/control/controler/sequence", lastJsonData)
-        #client.send_message("/control/controler/sequence", lastJsonDataTimestamp)
-
-    def action(self):
-        print("Run action")
-        self.sendOsc()
-
-    def start(self):
-        print("Run master")
-        #self.startOscListenner()
-        inter=setInterval(0.6,self.action)
-        # will stop interval in 5s
-        #t=threading.Timer(5,inter.cancel)
-        #t.start()
-
-
 def run(server_class=HTTPServer, handler_class=S, addr="localhost", port=7000):
     server_address = ("", port)
 
@@ -139,42 +63,4 @@ def run(server_class=HTTPServer, handler_class=S, addr="localhost", port=7000):
     thread1.start()
     #thread1.join()
 
-def runMaster():
-    player = PlayerMaster()
-    player.start()
-
-def waitForever():
-    print("After")
-    while True:
-        time.sleep(1)
-    print("End")
-
-if __name__ == "__main__":
-
-    parser = argparse.ArgumentParser(description="Run a simple HTTP server")
-    parser.add_argument(
-        "-l",
-        "--listen",
-        default="localhost",
-        help="Specify the IP address on which the server listens",
-    )
-    parser.add_argument(
-        "-p",
-        "--port",
-        type=int,
-        default=7000,
-        help="Specify the port on which the server listens",
-    )
-    args = parser.parse_args()
-
-    print("Before run")
-
-    # Run the webserver
-    run(addr=args.listen, port=args.port)
-
-    # Run master
-    runMaster()
-
-    # Start forever loops
-    #waitForever()
-
+StartTime=time.time()
