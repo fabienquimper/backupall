@@ -59,6 +59,20 @@ print("Prepare all object sorted lists:")
 prepare_all_sort()
 print("Finish all sort:")
 
+'''
+dd = getAllObjectsByFeature('alti', 1)
+print(dd)
+print(dd.iloc[0, :])
+print(dd.iloc[0, :].loc['id'])
+print(int(dd.iloc[0, :].loc['id']))
+print(dd.iloc[0, 0])
+print(dd.iloc[1, :])
+print(dd.iloc[1, :].loc['id'])
+print(int(dd.iloc[1, :].loc['id']))
+print(dd.iloc[1, 0])
+exit(0)
+'''
+
 if PRINT_DATA_DEBUG_MODE:
     print("All available features:")
     print(getAllFeatures())

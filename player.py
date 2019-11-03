@@ -2,6 +2,8 @@ import threading
 import time
 import json
 import datajson
+from dataobj import getAllObjectsByFeature
+import random
 
 MAX_TEMPO_MS = 20000
 
@@ -29,7 +31,10 @@ class setInterval :
         self.stopEvent.set()
 
 class PlayerMaster:
-    id = 0
+    currentObjectIndex = 0
+    currentObjectList = random.shuffle([i for i in range(1001)])
+    currentObjectFeature = 'id'
+    currentObjectSortDescending = 0
     oscBuilder = None
     allData = None
     #lastJsonDataTimestamp = None
@@ -54,7 +59,12 @@ class PlayerMaster:
     def sendOsc(self):
         #if self.lastJsonData == '':
         #    self.lastJsonData = 'empty'
-        self.oscBuilder.sendMessage("Toto is here. (OSC message)")
+        infoOsc = ''
+        if self.allData.hasData():
+            currentOjbectId = int(self.currentObjectList.iloc[self.currentObjectIndex, :].loc['id'])
+            print("Current id of index '" + "{}".format(self.currentObjectIndex) + "' is : '" + "{}".format(currentOjbectId) +"'" )
+            infoOsc = self.allData.getMasterMessage(currentOjbectId)
+        self.oscBuilder.sendMessage("Toto is here. (OSC message) " + infoOsc)
 
     def updateTimerStatus(self):
         global LAST_ACTION_DURATION
@@ -65,28 +75,36 @@ class PlayerMaster:
 
         if self.allData.hasData():
             cadence = self.allData.getCadenceMs(MAX_TEMPO_MS)
-            #cadence = round(self.allData.lastJsonData['global']['cadence']['value'] * MAX_TEMPO_MS/100) * 100
             print("Current CADENCE: " + "{}".format(cadence));
             if TEMPO != cadence:
                 TEMPO = cadence
                 print("Updated CADENCE to " + "{}".format(TEMPO));
-        #print("Updated CADENCE: " + self.lastJsonData['global']['cadence']['value']);
+
+        # Manage OFF
+        if not self.allData.hasData() or not self.allData.isOn():
+            print("Currently OFF or not data receive.")
+            return
 
         print("Run updateTimerStatus " + "{}".format(TECHNICAL_TEMPO_MILLISECONDS) + " ms - Last action was since: " + "{}".format(LAST_ACTION_DURATION) + "ms (tempo = " + "{}".format(TEMPO) + "ms)")
         if LAST_ACTION_DURATION == -1 or LAST_ACTION_DURATION >= TEMPO:
             print("ACTION IS COMING" + "{}".format(LAST_ACTION_DURATION) + " ms")
             # Do action
-            self.sendOsc()
             LAST_ACTION_DURATION = 0
-        else:
-            if self.allData.hasData() and self.allData.isOn():
-                LAST_ACTION_DURATION = LAST_ACTION_DURATION + TECHNICAL_TEMPO_MILLISECONDS
+            # If the action is not the same the index is reset
+            if self.allData.hasData() and not self.allData.isSameFeature(self.currentObjectFeature, self.currentObjectSortDescending):
+                print("Feature are updated **")
+                self.currentObjectIndex = 0
+                self.currentObjectFeature = self.allData.getObjectFeature()
+                self.currentObjectSortDescending = self.allData.getIdDescending()
+                self.currentObjectList = getAllObjectsByFeature(self.currentObjectFeature, not self.currentObjectSortDescending)
             else:
-                print("Currently OFF")
-        #TECHNICAL_TEMPO_MILLISECONDS = 100
-        #LAST_ACTION_DURATION = -1
-        #TEMPO = 1500
-        #LAST_TEMPO = TEMPO
+                print("Go to the next object " + str(self.currentObjectIndex) + " **")
+                self.currentObjectIndex = (self.currentObjectIndex + 1) % 1000
+            # Send OSC message
+            self.sendOsc()
+
+        else:
+            LAST_ACTION_DURATION = LAST_ACTION_DURATION + TECHNICAL_TEMPO_MILLISECONDS
 
     def action(self):
         self.updateTimerStatus()
