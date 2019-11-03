@@ -42,7 +42,7 @@ class PlayerMaster:
     def sendOsc(self):
         if self.lastJsonData == '':
             self.lastJsonData = 'empty'
-        self.oscBuilder.sendMessage("Toto is here.")
+        self.oscBuilder.sendMessage("Toto is here. (OSC message)")
 
     def action(self):
         print("Run action")

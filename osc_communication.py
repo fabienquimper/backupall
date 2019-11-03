@@ -8,7 +8,7 @@ class OscDispatcher():
     dispatcher = None
 
     def print_objects(self, unused_addr, args):
-        print("Data: " + args)
+        print("Data (OSC message received): " + args)
         #print("Mode received: [{0}]".format(args[0]))
 
     def createVideoSlave(self):

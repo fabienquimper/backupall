@@ -38,7 +38,8 @@
         <div class="col"><h3>Release</h3></div>
       </div>
       <div class="row">
-        <div class="col"><div id="target1"></div></div>
+  <!--      <div class="col"><div id="target1"></div></div> -->
+        <div class="col"><div class="d-inline-block">Asc</div><div id="sortId" class="d-inline-block"></div><div class="d-inline-block">Desc</div><div id="selectId"></div></div>
         <div class="col"><div id="target2"></div></div>
         <div class="col"><div id="target3"></div></div>
         <div class="col"><div id="target4"></div></div>
@@ -113,6 +114,37 @@
         return button;
       };
 
+      // Copy / paste of the liste in dataobj.py which loads data
+      window.allFeatures = {'id': 'id', 'kms': 'kms', 'alti': 'alti', 'lat_deg': 'lat_deg', 'long_deg': 'long_deg', 'poids': 'Poids (g)', 'taille': 'taille'};
+
+      // Example createOnOff("target2")
+      window.createSelect = function(divId) {
+        let select = new Nexus.Select("#" + divId,{
+          'size': [130,30],
+          'options': Object.keys(window.allFeatures)
+        });
+
+        select.on('change',function(v) {
+          console.log('Select value: ' + v);
+           window.mainListener('#' + divId + "  clicked.");
+         });
+        return select;
+      };
+
+      // Example createOnOff("target2")
+      window.createToggle = function(divId) {
+        let toggle = new Nexus.Toggle("#" + divId,{
+        'size': [40,20],
+        'state': false
+         });
+
+        toggle.on('change',function(v) {
+          console.log('Select value: ' + v + ' (' + (typeof v) + ')');
+           window.mainListener('#' + divId + "  clicked.");
+         });
+        return toggle;
+      };  
+
 
       // ###################################################
       // ALL DATA
@@ -128,9 +160,17 @@
             }
           },
           'enveloppe':  {
-            'id': {
+           /* 'id': {
               'value': -1,
               'controller': window.createSlider("target1"),
+            },*/
+            'id_sort_desc': {
+              'value': 0,
+              'controller': window.createToggle("sortId"),
+            },
+            'id_feature': {
+              'value': 'id',
+              'controller': window.createSelect("selectId"),
             },
             'intensity': {
               'value': -1,
@@ -153,7 +193,6 @@
 
       window.updateAllValues = function() {
           Object.entries(window.allData.global).forEach(([key, value]) => {
-              value.value = value.controller.value;
               if (typeof value.controller.state !== 'undefined') {
                 value.value = value.controller.state ? 1 : 0;
               } else {
@@ -161,7 +200,11 @@
               }
           });
           Object.entries(window.allData.enveloppe).forEach(([key, value]) => {
-              value.value = value.controller.value;
+              if (typeof value.controller.state !== 'undefined') {
+                value.value = value.controller.state ? 1 : 0;
+              } else {
+                value.value = value.controller.value;
+              }
           });
        };
 
