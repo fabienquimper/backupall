@@ -9,6 +9,8 @@ COPY main.py .
 COPY osc_communication.py .
 COPY webserver.py .
 COPY player.py .
+COPY geocyclab-datas.csv .
+COPY dataobj.py .
 #7000 is the webserver
 #8000 is for OSC for MASTER
 #8001 is for OSC for LIGTH SLAVE

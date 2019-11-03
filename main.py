@@ -14,6 +14,7 @@ import argparse
 from osc_communication import OscDispatcher, OscCommunication
 import webserver
 import player
+import dataobj
 
 # All data
 lastJsonData = ''
@@ -47,6 +48,9 @@ if __name__ == "__main__":
         help="Specify the port on which the server listens",
     )
     args = parser.parse_args()
+
+    print("All data:")
+
 
     print("Before run")
 

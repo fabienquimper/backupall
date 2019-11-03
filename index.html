@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Bootstrap 101 Template</title>
+    <title>ExSitu - Backup interface</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -24,7 +24,11 @@
 
       <div class="row">
         <div class="col"><h3>Cadence</h3></div>
+        <div class="col">200ms</div>
         <div class="col"><div id="target6"></div></div>
+        <div class="col">20s</div>
+        <div class="col"><h3>On/Off</h3></div>
+        <div class="col"><div id="target7"></div></div>
       </div>
       <div class="row">
         <div class="col"><h3>Id</h3></div>
@@ -94,6 +98,21 @@
         return slider;
       };
 
+      // Example createOnOff("target2")
+      window.createOnOff = function(divId) {
+        let button = new Nexus.Button("#" + divId,{
+          'size': [40,40],
+          'mode': 'toggle',
+          'state': false
+        });
+
+        button.on('change',function(v) {
+          console.log('Dial value: ' + v);
+           window.mainListener('#' + divId + "  clicked.");
+         });
+        return button;
+      };
+
 
       // ###################################################
       // ALL DATA
@@ -102,6 +121,10 @@
             'cadence': {
               'value': -1,
               'controller': window.createSlider("target6"),
+            },
+            'onoff': {
+              'value': false,
+              'controller': window.createOnOff("target7"),
             }
           },
           'enveloppe':  {
@@ -131,6 +154,11 @@
       window.updateAllValues = function() {
           Object.entries(window.allData.global).forEach(([key, value]) => {
               value.value = value.controller.value;
+              if (typeof value.controller.state !== 'undefined') {
+                value.value = value.controller.state ? 1 : 0;
+              } else {
+                value.value = value.controller.value;
+              }
           });
           Object.entries(window.allData.enveloppe).forEach(([key, value]) => {
               value.value = value.controller.value;
@@ -141,11 +169,11 @@
           let res = {};
           res['global'] = {};
           Object.entries(window.allData.global).forEach(([key, value]) => {
-              res['global'][key] = { 'value' : value.value };
+            res['global'][key] = { 'value' : value.value };
           });
           res['enveloppe'] = {};
           Object.entries(window.allData.enveloppe).forEach(([key, value]) => {
-              res['enveloppe'][key] = { 'value' : value.value };
+            res['enveloppe'][key] = { 'value' : value.value };
           });
           return JSON.stringify(res);
        };
