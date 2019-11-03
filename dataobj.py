@@ -12,9 +12,10 @@ df = pd.read_csv('geocyclab-datas.csv', header=[0], sep='\t')
 mainFeatures = {'id': 'id', 'kms': 'kms', 'alti': 'alti', 'lat_deg': 'lat_deg', 'long_deg': 'long_deg', 'poids': 'Poids (g)', 'taille': 'taille'}
 
 # All sorted objects
-mainFeaturesSorted = {}
+mainFeaturesSortedAscending = {}
+mainFeaturesSortedDescending = {}
 
-def prepare_sort_one_feature(feature):
+def prepare_sort_one_feature(feature, is_ascending):
     global df
     global mainFeatures
     #print(mainFeatures)
@@ -22,29 +23,36 @@ def prepare_sort_one_feature(feature):
     if (feature not in mainFeatures):
         feature = 'id'
 
-    result = df.sort_values(mainFeatures[feature], ascending=[1])
+    isAscendingSort = 1
+    if not is_ascending:
+        isAscendingSort = 0
 
+    result = df.sort_values(mainFeatures[feature], ascending=[isAscendingSort])
     return result
 
 def prepare_all_sort():
     global mainFeaturesSorted
     global mainFeatures
     for featureId in mainFeatures.keys():
-        mainFeaturesSorted[featureId] = prepare_sort_one_feature(featureId)
+        mainFeaturesSortedAscending[featureId] = prepare_sort_one_feature(featureId, True)
+        mainFeaturesSortedDescending[featureId] = prepare_sort_one_feature(featureId, False)
 
 def getAllFeatures():
-    global mainFeaturesSorted
-    return mainFeaturesSorted.keys()
+    global mainFeatures
+    return mainFeatures.keys()
 
 
-def getAllObjectsByFeature(feature):
+def getAllObjectsByFeature(feature, is_ascending):
     global mainFeatures
     #print(mainFeatures)
 
-    if (feature not in mainFeaturesSorted):
+    if (feature not in mainFeatures):
         feature = 'id'
 
-    return mainFeaturesSorted[feature]
+    if is_ascending:
+        return mainFeaturesSortedAscending[feature]
+    else:
+        return mainFeaturesSortedDescending[feature]
 
 
 print("Prepare all object sorted lists:")
@@ -56,6 +64,8 @@ if PRINT_DATA_DEBUG_MODE:
     print(getAllFeatures())
 
     for feature in mainFeatures:
-        print("*********** BY " + feature)
-        print(mainFeaturesSorted[feature])
+        print("*********** (ASCENDING) BY " + feature)
+        print(mainFeaturesSortedAscending[feature])
+        print("*********** (DESCENDING) BY " + feature)
+        print(mainFeaturesSortedDescending[feature])
 
