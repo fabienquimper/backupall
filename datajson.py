@@ -13,12 +13,13 @@ class AllData:
     	return round(self.lastJsonData['global']['cadence']['value'] * maxTempoMs/100) * 100
 
     def getMasterMessage(self, currentObjectIndex):
-    	intensity = round(self.lastJsonData['enveloppe']['intensity']['value'] * 100);
-    	attack = round(self.lastJsonData['enveloppe']['attack']['value'] * 100);
-    	hold = round(self.lastJsonData['enveloppe']['hold']['value'] * 100);
-    	release = round(self.lastJsonData['enveloppe']['release']['value'] * 100);
+    	intensity = round(self.lastJsonData['enveloppe']['intensity']['value']);
+    	attack = round(self.lastJsonData['enveloppe']['attack']['value']);
+    	hold = round(self.lastJsonData['enveloppe']['hold']['value']);
+    	release = round(self.lastJsonData['enveloppe']['release']['value']);
     	# ID / INTENSITY / ATTACK / HOLD
-    	return "/" + str(currentObjectIndex) + "/" + str(intensity) + "/" + str(attack) + "/" + str(hold) + "/" + str(release)
+    	SEPARATOR = " "
+    	return "" + str(currentObjectIndex) + SEPARATOR + str(intensity) + SEPARATOR + str(attack) + SEPARATOR + str(hold) + SEPARATOR + str(release) + ""
 
     # Be careful: it is an integer and not a Boolean (like the JSON file)
     def getIdDescending(self):

@@ -13,7 +13,17 @@ class OscDispatcher():
 
     def createVideoSlave(self):
         self.dispatcher = dispatcher.Dispatcher()
-        self.dispatcher.map("/control/controler/sequence", self.print_objects)
+        self.dispatcher.map("/video/shape", self.print_objects)
+        return self.dispatcher
+
+    def createLightSlave(self):
+        self.dispatcher = dispatcher.Dispatcher()
+        self.dispatcher.map("/light/shape", self.print_objects)
+        return self.dispatcher
+
+    def createAudioSlave(self):
+        self.dispatcher = dispatcher.Dispatcher()
+        self.dispatcher.map("/audio/shape", self.print_objects)
         return self.dispatcher
 
 
@@ -37,12 +47,14 @@ class OscCommunication():
     def start(self):
         self.client = udp_client.SimpleUDPClient(self.uri, self.port)
         #self.dispatcher = dispatcher.Dispatcher()
-        #self.dispatcher.map("/control/controler/sequence", self.print_objects)#filter_min_max  rien
+        #self.dispatcher.map("/audio/shape", self.print_objects)#filter_min_max  rien
         self.serverOsc = osc_server.ThreadingOSCUDPServer((self.uri, self.port), self.dispatcher)
         self.thread = threading.Thread(target = self.serverOsc.serve_forever)
         self.thread.start()
 
-    def sendMessage(self, msg):
-        self.client.send_message("/control/controler/sequence", msg)
+    def sendAudioMessage(self, msg):
+        head_message = "/audio/shape"
+        print("OSC message send is: '" + head_message + msg + "'")
+        self.client.send_message(head_message, msg)
         #client.send_message("/control/controler/sequence", lastJsonData)
         #client.send_message("/control/controler/sequence", lastJsonDataTimestamp)

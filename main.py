@@ -21,7 +21,9 @@ allData = AllData()
 
 # OSC module
 oscDispatcher = OscDispatcher()
-oscBuilder = OscCommunication("127.0.0.1", 8001, oscDispatcher.createVideoSlave())
+#oscBuilder = OscCommunication("127.0.0.1", 8001, oscDispatcher.createVideoSlave())
+#oscBuilder = OscCommunication("10.3.141.105", 8002, oscDispatcher.createAudioSlave())
+oscBuilder = OscCommunication("127.0.0.1", 8002, oscDispatcher.createAudioSlave())
 oscBuilder.start()
 
 def waitForever():

@@ -32,7 +32,7 @@ class setInterval :
 
 class PlayerMaster:
     currentObjectIndex = 0
-    currentObjectList = random.shuffle([i for i in range(1001)])
+    currentObjectList = getAllObjectsByFeature('id', 0)#random.shuffle([i for i in range(1001)])
     currentObjectFeature = 'id'
     currentObjectSortDescending = 0
     oscBuilder = None
@@ -61,10 +61,15 @@ class PlayerMaster:
         #    self.lastJsonData = 'empty'
         infoOsc = ''
         if self.allData.hasData():
-            currentOjbectId = int(self.currentObjectList.iloc[self.currentObjectIndex, :].loc['id'])
+            currentOjbectId = 0
+            try:
+                currentOjbectId = int(self.currentObjectList.iloc[self.currentObjectIndex, :].loc['id'])
+            except:
+                print("An exception occurred on currentOjbectId") 
             print("Current id of index '" + "{}".format(self.currentObjectIndex) + "' is : '" + "{}".format(currentOjbectId) +"'" )
             infoOsc = self.allData.getMasterMessage(currentOjbectId)
-        self.oscBuilder.sendMessage("Toto is here. (OSC message) " + infoOsc)
+            #self.oscBuilder.sendMessage("Toto is here. (OSC message) " + infoOsc)
+            self.oscBuilder.sendAudioMessage(infoOsc)
 
     def updateTimerStatus(self):
         global LAST_ACTION_DURATION

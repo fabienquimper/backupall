@@ -32,10 +32,10 @@
       </div>
       <div class="row">
         <div class="col"><h3>Id</h3></div>
-        <div class="col"><h3>Intensity</h3></div>
-        <div class="col"><h3>Attack</h3></div>
+        <div class="col"><h3>Level</h3></div>
+        <div class="col"><h3>Fad-in</h3></div>
         <div class="col"><h3>Hold</h3></div>
-        <div class="col"><h3>Release</h3></div>
+        <div class="col"><h3>Fade-out</h3></div>
         <div class="col"></div>
       </div>
       <div class="row">
@@ -90,8 +90,13 @@
       };
 
       // Example createSlider("target2")
-      window.createSlider = function(divId) {
-        let slider = new Nexus.Slider("#" + divId);
+      window.createSlider = function(divId, min, max) {
+        let slider = new Nexus.Slider("#" + divId, {
+            'size': [120,20],
+            'mode': 'relative',  // 'relative' or 'absolute'
+            'min': min,
+            'max': max
+        });
         slider.on('click',function(v) {
            window.mainListener('#' + divId + "  clicked.");
          });
@@ -157,7 +162,7 @@
            'global':  {
             'cadence': {
               'value': -1,
-              'controller': window.createSlider("target6"),
+              'controller': window.createSlider("target6", 0, 1),
             },
             'is_on': {
               'value': 0,
@@ -179,19 +184,19 @@
             },
             'intensity': {
               'value': -1,
-              'controller': window.createSlider("target2")
+              'controller': window.createSlider("target2", 0, 255)
             },
             'attack': {
               'value': -1,
-              'controller': window.createSlider("target3")
+              'controller': window.createSlider("target3", 0, 10000)
             },
             'hold': {
               'value': -1,
-              'controller': window.createSlider("target4")
+              'controller': window.createSlider("target4", 0, 10000)
             },
             'release': {
               'value': -1,
-              'controller': window.createDial("target5")
+              'controller': window.createDial("target5", 0, 10000)
             }
           }
       };
