@@ -54,6 +54,8 @@
           // 2) Console.log JSON
           console.log(window.allData);
           // 3) Send JSON without controler to the server
+          let jsonStringify = getAllValuesWithoutController();
+          window.sendAllDataToServer(jsonStringify);
       };
 
       // ###################################################
@@ -126,13 +128,43 @@
           }
       };
 
-       window.updateAllValues = function() {
+      window.updateAllValues = function() {
           Object.entries(window.allData.global).forEach(([key, value]) => {
               value.value = value.controller.value;
           });
           Object.entries(window.allData.enveloppe).forEach(([key, value]) => {
               value.value = value.controller.value;
           });
+       };
+
+      window.getAllValuesWithoutController = function() {
+          let res = {};
+          res['global'] = {};
+          Object.entries(window.allData.global).forEach(([key, value]) => {
+              res['global'][key] = { 'value' : value.value };
+          });
+          res['enveloppe'] = {};
+          Object.entries(window.allData.enveloppe).forEach(([key, value]) => {
+              res['enveloppe'][key] = { 'value' : value.value };
+          });
+          return JSON.stringify(res);
+       };
+
+       window.sendAllDataToServer = function(_data) {
+          let xhr = new XMLHttpRequest();
+          xhr.open("POST", '/server', true);
+
+          //Envoie les informations du header adaptées avec la requête
+          xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+          xhr.onreadystatechange = function() { //Appelle une fonction au changement d'état.
+              if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+          // Requête finie, traitement ici.
+              }
+          }
+          xhr.send(_data);
+          // xhr.send(new Int8Array()); 
+          // xhr.send(document);
        };
 
        console.log('Init:');

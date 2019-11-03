@@ -62,7 +62,7 @@ if __name__ == "__main__":
         "-p",
         "--port",
         type=int,
-        default=8000,
+        default=7000,
         help="Specify the port on which the server listens",
     )
     args = parser.parse_args()

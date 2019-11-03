@@ -5,28 +5,23 @@ import argparse
 from http.server import HTTPServer, BaseHTTPRequestHandler, CGIHTTPRequestHandler
 import json
 import datetime
-from pythonosc import dispatcher
-from pythonosc import osc_server
-from pythonosc import udp_client
-from pythonosc import osc_message_builder
+#from pythonosc import dispatcher
+#from pythonosc import osc_server
+#from pythonosc import udp_client
 
-lastJsonData = ''
-lastJsonDataTimestamp = ''
+global lastJsonData
+global lastJsonDataTimestamp
 
 def rien():
     print("Rien")
 
-def print_objects(unused_addr, args):
-    print("Data: " + args)
-    #print("Mode received: [{0}]".format(args[0]))
+#client = udp_client.SimpleUDPClient("localhost", "8001")
 
-client = udp_client.SimpleUDPClient("127.0.0.1", 8001)
-
-dispatcher = dispatcher.Dispatcher()
-dispatcher.map("/control/controler/sequence", print_objects)#filter_min_max  rien
-serverOsc = osc_server.ThreadingOSCUDPServer(("127.0.0.1", 8001), dispatcher)
-thread2 = threading.Thread(target = serverOsc.serve_forever)
-thread2.start()
+#dispatcher = dispatcher.Dispatcher()
+#dispatcher.map("/control/controler/filter/min-max", rien)#filter_min_max
+#server = osc_server.ThreadingOSCUDPServer(("localhost", "8001"), dispatcher)
+#thread2 = threading.Thread(target = server.serve_forever)
+#thread2.start()
 
 def getDateTimestamp():
     return datetime.datetime.fromtimestamp(time.gmtime()).isoformat()
@@ -60,8 +55,6 @@ class S(CGIHTTPRequestHandler):
         content_len = int(self.headers.get('Content-Length'))
         post_body = self.rfile.read(content_len)
         print(post_body)
-        global jsonDataReceived
-        global lastJsonDataTimestamp
         jsonDataReceived = json.loads( post_body )
         print(jsonDataReceived)
         lastJsonDataTimestamp = getDateTimestamp
@@ -90,9 +83,7 @@ class setInterval :
         self.stopEvent.set()
 
 class PlayerMaster:
-    id = 0
-
-    def rien(self):
+    def rien():
         print("Rien")
 
     #def filter_min_max(unused_addr, args):
@@ -103,17 +94,11 @@ class PlayerMaster:
 
 
     def sendOsc(self):
-        global lastJsonData
-        global lastJsonDataTimestamp
-        if lastJsonData == '':
-            lastJsonData = 'empty'
-        client.send_message("/control/controler/sequence", "dsffds dsfdsf dsfds dsf")
-        #client.send_message("/control/controler/sequence", lastJsonData)
-        #client.send_message("/control/controler/sequence", lastJsonDataTimestamp)
+        client.send_message("/control/controler/filter/min-max", "alt")
 
     def action(self):
         print("Run action")
-        self.sendOsc()
+        #self.sendOsc()
 
     def start(self):
         print("Run master")
@@ -139,15 +124,16 @@ def run(server_class=HTTPServer, handler_class=S, addr="localhost", port=7000):
     thread1.start()
     #thread1.join()
 
-def runMaster():
-    player = PlayerMaster()
-    player.start()
 
 def waitForever():
     print("After")
     while True:
         time.sleep(1)
     print("End")
+
+def runMaster():
+    player = PlayerMaster()
+    player.start()
 
 if __name__ == "__main__":
 
