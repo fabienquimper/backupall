@@ -48,9 +48,9 @@ class OscCommunication():
         self.client = udp_client.SimpleUDPClient(self.uri, self.port)
         #self.dispatcher = dispatcher.Dispatcher()
         #self.dispatcher.map("/audio/shape", self.print_objects)#filter_min_max  rien
-        self.serverOsc = osc_server.ThreadingOSCUDPServer((self.uri, self.port), self.dispatcher)
-        self.thread = threading.Thread(target = self.serverOsc.serve_forever)
-        self.thread.start()
+        #self.serverOsc = osc_server.ThreadingOSCUDPServer((self.uri, self.port), self.dispatcher)
+        #self.thread = threading.Thread(target = self.serverOsc.serve_forever)
+        #self.thread.start()
 
     def sendAudioMessage(self, msg):
         head_message = "/audio/shape"

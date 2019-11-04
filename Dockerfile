@@ -12,6 +12,7 @@ COPY player.py .
 COPY geocyclab-datas.csv .
 COPY dataobj.py .
 COPY datajson.py .
+COPY testosc.py .
 #7000 is the webserver
 #8000 is for OSC for MASTER
 #8001 is for OSC for LIGTH SLAVE
@@ -20,6 +21,7 @@ COPY datajson.py .
 EXPOSE 7000 8000 8001 8002 8003
 #CMD [ "python", "./your-daemon-or-script.py" ]
 CMD [ "python", "./main.py" ]
+#CMD [ "python", "./testosc.py" ]
 #CMD python -m http.server 7000
 #CMD python ./webserver-dummy.py -l localhost -p 7000
 #CMD [ "python", "./webserver-dummy.py -l localhost -p 7000" ]
